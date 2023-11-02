@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- 
+2015-04-23 : 제작시작
+임의사용 금지.
+
+-->
+<html lang="ko">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
+		<title>WC2</title>
+	</head>
+	<style>
+	img{border:2px solid red;}
+	canvas{border:2px solid blue;}
+	</style>
+	<body>
+	<div id="divBase">
+		
+	</div>
+	
+	
+	TEST1. click:img.src=canvas.toDataURL() : <input type="button" onclick="fn1(this)" value="go">:2540:100%<br>
+	TEST2. click:canvas.drawImage(canvas) : <input type="button" onclick="fn2(this)" value="go">:20240:797%<br>
+	TEST3. click:canvas.drawImage(image) : <input type="button" onclick="fn3(this)" value="go">:64937:2557%<br>
+	TEST4. click:canvas.putImageData(canvas.getImageData()) : <input type="button" onclick="fn4(this)" value="go">:4072:160%<br>
+	TEST4_1. click:canvas.putImageData(imageData) : <input type="button" onclick="fn4_1(this)" value="go">:8691:342%<br>
+	TEST5. click:canvas.clear() : <input type="button" onclick="fn5(this)" value="go">:127550:5022%<br>
+	
+	<hr>
+	주의 : 수정된 canvas를 사용하였음.<br>
+	테스트 할 때 마다 숫자가 요동침...<br>
+	크롬  버전 42.0.2311.135 에서 테스트
+	<hr>
+	
+	
+	<hr>
+<pre>
+결론<br>
+canvas.clear() > canvas.drawImage(image) > canvas.drawImage(canvas)  >canvas.putImageData(imageData) >canvas.putImageData(canvas.getImageData()) > img.src=canvas.toDataURL()<br>
+img.src=canvas.toDataURL()은 될 수 있으면 쓰지 말라. 하지만 image를 붙여넣기위한 이미지를 만든다면 무시.(1회동작이니깐)<br>
+canvas.putImageData(canvas.getImageData())는 비트 단위 정확한 이동 등에만 사용하라, 그게 아니면 canvas.drawImage(canvas) 쪽이 더 빠르다.<br>
+canvas.drawImage(canvas) 는 생각보다 느리지만, reisze등을 생각한다면 어쩔 수 없다.(리사이즈로 처리되면 더욱더 느려진다.)<br>
+getImageData()와 putImageData()의 속도는 거의 같은 듯(getImageData를 한 번만 하면 속도가 약 2배 정도 나온다.)
+</pre>
+	<!-- WC2 -->
+	<script src="../js/class.WebCanvas.js"></script>
+	<script>
+	var c1 = WebCanvas(100,100);
+	c1.id = "c1";
+	var c2 = WebCanvas(100,100);
+	c2.id="c2";
+	var img1 = new Image();
+	img1.src = "../img/bg.gif";
+	var divBase = document.getElementById('divBase');
+	c1.line(0,0,100,100);
+	c1.line(0,100,100,0);
+	divBase.appendChild(c1);
+	divBase.appendChild(document.createElement('hr'));
+	divBase.appendChild(img1);
+	divBase.appendChild(document.createElement('hr'));
+	divBase.appendChild(c2);
+	img1.src = c1.toDataURL();
+	
+	function fn1(btn){
+		var i = 0;
+		var st = (new Date()).getTime();
+		while(i++ <= 50000){
+			img1.src = c1.toDataURL();
+			if(i%1000==0){
+				document.title = i
+			}
+		}
+		var gap = (new Date()).getTime()-st;
+		btn.value = 'TPS : '+(i/(gap/1000));
+	}
+	function fn2(btn){
+		var i = 0;
+		var st = (new Date()).getTime();
+		while(i++ <= 50000){
+			c2.drawImage(c1,0,0,50,50);
+			if(i%1000==0){
+				document.title = i
+			}
+		}
+		var gap = (new Date()).getTime()-st;
+		btn.value = 'TPS : '+(i/(gap/1000));
+	}
+	function fn3(btn){
+		var i = 0;
+		var st = (new Date()).getTime();
+		while(i++ <= 50000){
+			c2.drawImage(img1,0,0);
+			if(i%1000==0){
+				document.title = i
+			}
+		}
+		var gap = (new Date()).getTime()-st;
+		btn.value = 'TPS : '+(i/(gap/1000));
+	}
+	function fn4(btn){
+		var i = 0;
+		var st = (new Date()).getTime();
+		while(i++ <= 50000){
+			c2.cmdContext2d("putImageData",c1.cmdContext2d("getImageData"));
+			if(i%1000==0){
+				document.title = i
+			}
+		}
+		var gap = (new Date()).getTime()-st;
+		btn.value = 'TPS : '+(i/(gap/1000));
+	}
+		function fn4_1(btn){
+		var i = 0;
+		var st = (new Date()).getTime();
+		var imgData = c1.cmdContext2d("getImageData");
+		while(i++ <= 50000){
+			c2.cmdContext2d("putImageData",imgData);
+			if(i%1000==0){
+				document.title = i
+			}
+		}
+		var gap = (new Date()).getTime()-st;
+		btn.value = 'TPS : '+(i/(gap/1000));
+	}
+	function fn5(btn){
+		var i = 0;
+		var st = (new Date()).getTime();
+		while(i++ <= 50000){
+			c2.clear();
+			if(i%1000==0){
+				document.title = i
+			}
+		}
+		var gap = (new Date()).getTime()-st;
+		btn.value = 'TPS : '+(i/(gap/1000));
+	}
+	</script>
+	<!-- -->
+	</body>
+</html>

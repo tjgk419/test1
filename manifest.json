@@ -1,0 +1,42 @@
+{
+  "name": "WebCanvas2",
+  "short_name": "WC2",
+  "description": "Web Canvas 2",
+  "start_url": "./WC2.html",
+  "display": "standalone",
+  "theme_color": "#aabbcc",
+  "background_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "img/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "72x72"
+    },
+    {
+      "src": "img/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "img/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    },
+    {
+      "src": "img/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "img/512x512.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+  
+}
